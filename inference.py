@@ -2,7 +2,7 @@ from rules import RULES
 
 
 def evaluate_rules(data):
-    """Forward chaining: evaluasi semua rule IF-THEN dan simpan rule aktif."""
+    """Forward chaining: evaluate all IF-THEN rules and store active rules."""
     active_rules = []
 
     for rule in RULES:
@@ -20,7 +20,7 @@ def evaluate_rules(data):
 
 
 def resolve_conflict(active_rules):
-    """Conflict handling dengan prioritas High > Medium > Low."""
+    """Conflict handling with priority High > Medium > Low."""
     levels = {rule["level"] for rule in active_rules}
 
     if "High" in levels:

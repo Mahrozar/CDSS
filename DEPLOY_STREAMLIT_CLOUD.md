@@ -1,30 +1,30 @@
-# Deploy Gratis ke Streamlit Community Cloud
+# Free Deployment to Streamlit Community Cloud
 
-## 1) Siapkan repository GitHub
+## 1) Prepare GitHub Repository
 
-- Buat repository baru di GitHub.
-- Upload file berikut:
+- Create a new repository on GitHub.
+- Upload the following files:
   - `app.py`
   - `rules.py`
   - `inference.py`
   - `requirements.txt`
   - `.gitignore`
-  - `sample_test_data.csv` (opsional, untuk demo)
+  - `sample_test_data.csv` (optional, for demo)
 
-## 2) Push project dari lokal
+## 2) Push Project from Local
 
-Jalankan di folder project:
+Run in the project folder:
 
 ```powershell
 git init
 git add .
 git commit -m "Initial CDSS rule-based app"
 git branch -M main
-git remote add origin https://github.com/USERNAME/NAMA-REPO.git
+git remote add origin https://github.com/USERNAME/REPO-NAME.git
 git push -u origin main
 ```
 
-Jika repository sudah ada, cukup:
+If repository already exists, just:
 
 ```powershell
 git add .
@@ -32,25 +32,25 @@ git commit -m "Prepare deployment"
 git push
 ```
 
-## 3) Deploy di Streamlit Community Cloud
+## 3) Deploy on Streamlit Community Cloud
 
-- Buka https://share.streamlit.io/
-- Login dengan akun GitHub.
-- Klik **Create app**.
-- Pilih repository, branch `main`, dan file utama `app.py`.
-- Klik **Deploy**.
+- Open https://share.streamlit.io/
+- Login with GitHub account.
+- Click **Create app**.
+- Select repository, branch `main`, and main file `app.py`.
+- Click **Deploy**.
 
-## 4) Verifikasi aplikasi
+## 4) Verify Application
 
-Setelah build selesai, buka URL aplikasi dan cek:
+After build completes, open the app URL and check:
 
-- Tab **Analisis Individu** berjalan.
-- Tab **Analisis Batch CSV** bisa upload file CSV.
-- Hasil menampilkan risiko, traceability, dan ringkasan rule.
+- **Individual Analysis** tab runs.
+- **Batch CSV Analysis** tab can upload CSV file.
+- Results display risk, traceability, and rule summary.
 
-## 5) Update aplikasi setelah deploy
+## 5) Update Application After Deployment
 
-Setiap ada perubahan kode:
+For every code change:
 
 ```powershell
 git add .
@@ -58,10 +58,10 @@ git commit -m "Update CDSS logic/UI"
 git push
 ```
 
-Streamlit Cloud akan otomatis rebuild.
+Streamlit Cloud will automatically rebuild.
 
-## Catatan penting untuk TA
+## Important Notes for TA
 
-- Sistem ini **rule-based** dan **tidak menggunakan machine learning**.
-- Dataset digunakan sebagai data simulasi inferensi, bukan training model.
-- Untuk demo online, gunakan file CSV yang tidak terlalu besar agar respon cepat.
+- This system is **rule-based** and **does not use machine learning**.
+- Dataset is used as simulation data for inference, not for training models.
+- For online demo, use CSV files that are not too large for fast response.
