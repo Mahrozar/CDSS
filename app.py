@@ -127,6 +127,12 @@ def main():
 		"Pendekatan: Knowledge-based IF-THEN, forward chaining, conflict handling, dan decision traceability."
 	)
 	st.info("Sistem ini tidak menggunakan machine learning atau training model.")
+	st.markdown(
+		"""
+		**Demo Statement:**  
+		"This system demonstrates how clinical guidelines are operationalized into a rule-based decision support system, ensuring transparency, explainability, and clinical interpretability."
+		"""
+	)
 
 	tab_single, tab_batch = st.tabs(["Analisis Individu", "Analisis Batch CSV"])
 
@@ -171,8 +177,15 @@ def main():
 			)
 
 			st.write("")
-			st.subheader("Traceability (Rule Aktif)")
+			st.subheader("Penjelasan Mengapa (WHY)")
+			if active_rules:
+				st.write("Risiko ini ditentukan berdasarkan rule klinis berikut yang terpenuhi:")
+				for rule in active_rules:
+					st.markdown(f"- **{rule['rule_id']}**: {rule['if']} → {rule['then']}")
+			else:
+				st.info("Tidak ada rule yang terpenuhi. Risiko rendah ditetapkan secara default.")
 
+			st.subheader("Traceability (Rule Aktif)")
 			if active_rules:
 				st.table(active_rules)
 				active_rule_ids = ", ".join([rule["rule_id"] for rule in active_rules])
@@ -180,19 +193,26 @@ def main():
 			else:
 				st.info("Tidak ada rule yang aktif. Sistem menetapkan risiko rendah secara default.")
 
-			st.subheader("Alur Keputusan")
+			st.subheader("Alur Keputusan (Proses Inferensi)")
 			high_count = sum(1 for r in active_rules if r["level"] == "High")
 			medium_count = sum(1 for r in active_rules if r["level"] == "Medium")
 			low_count = sum(1 for r in active_rules if r["level"] == "Low")
 
 			st.markdown(
+				"""
+				**Proses Inferensi Rule-Based:**  
+				User input → Rule evaluation → Inference engine → Result → Explanation
+				"""
+			)
+			st.markdown(
 				"\n".join(
 					[
-						f"1. Sistem membaca basis pengetahuan klinis berupa {len(RULES)} rule IF-THEN (R1-R30).",
-						"2. Forward chaining mengevaluasi semua rule terhadap data pasien.",
-						f"3. Rule aktif ditemukan: {len(active_rules)} (High={high_count}, Medium={medium_count}, Low={low_count}).",
-						"4. Conflict handling diterapkan dengan prioritas High > Medium > Low.",
-						f"5. Keputusan akhir: {final_risk}.",
+						f"1. **User Input**: Data pasien dimasukkan (usia={age}, BMI={bmi}, glukosa={glucose}, HbA1c={hba1c}, hipertensi={hypertension}, penyakit jantung={heart_disease}, merokok={smoking}).",
+						f"2. **Rule Evaluation**: Sistem mengevaluasi {len(RULES)} rule IF-THEN (R1-R30) terhadap data pasien menggunakan forward chaining.",
+						f"3. **Inference Engine**: Rule aktif ditemukan: {len(active_rules)} (High={high_count}, Medium={medium_count}, Low={low_count}).",
+						"4. **Conflict Handling**: Prioritas High > Medium > Low diterapkan jika ada konflik.",
+						f"5. **Result**: Keputusan akhir: {final_risk}.",
+						"6. **Explanation**: Penjelasan WHY ditampilkan berdasarkan rule yang terpenuhi.",
 					]
 				)
 			)
