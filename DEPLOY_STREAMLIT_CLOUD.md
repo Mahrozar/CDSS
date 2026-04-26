@@ -40,7 +40,7 @@ git push
 - Select repository, branch `main`, and main file `app.py`.
 - Click **Deploy**.
 
-## 4) Verify Application
+## 4) Verify Applicationn
 
 After build completes, open the app URL and check:
 
