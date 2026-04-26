@@ -50,7 +50,7 @@ def prepare_batch_dataframe(df):
 	if missing:
 		available = ", ".join(renamed.columns.astype(str).tolist())
 		raise ValueError(
-			f"Kolom wajib tidak ditemukan: {', '.join(missing)}. Kolom yang terbaca: {available}"
+			f"Required columns not found: {', '.join(missing)}. Detected columns: {available}"
 		)
 
 	prepared = renamed[required].copy()
@@ -75,7 +75,7 @@ def prepare_batch_dataframe(df):
 
 
 def evaluate_batch(prepared):
-	"""Evaluasi dataset simulasi secara batch dengan forward chaining."""
+	"""Evaluate simulation dataset in batch using forward chaining."""
 	rule_counts = {rule["id"]: 0 for rule in RULES}
 	risk_counts = {"High": 0, "Medium": 0, "Low": 0}
 	no_active_count = 0
@@ -121,18 +121,9 @@ def evaluate_batch(prepared):
 def main():
 	st.set_page_config(page_title="CDSS Diabetes Type 2", layout="wide")
 
-	st.title("Clinical Decision Support System (Rule-Based)")
-	st.subheader("Early Detection of Type 2 Diabetes Mellitus")
-	st.caption(
-		"Approach: Knowledge-based IF-THEN, forward chaining, conflict handling, and decision traceability."
-	)
-	st.info("This system does not use machine learning or training models.")
-	st.markdown(
-		"""
-		**Demo Statement:**  
-		"This system demonstrates how clinical guidelines are operationalized into a rule-based decision support system, ensuring transparency, explainability, and clinical interpretability."
-		"""
-	)
+	st.title("Clinical Decision Support System (CDSS)")
+	st.subheader("Early Detection of Type 2 Diabetes")
+	st.caption("Rule-based inference with traceable decision logic.")
 
 	tab_single, tab_batch = st.tabs(["Individual Analysis", "Batch CSV Analysis"])
 
@@ -170,52 +161,51 @@ def main():
 			st.markdown(
 				f"""
 				<div style="padding: 16px; border-radius: 10px; border: 2px solid {border_color}; background-color: {bg_color};">
-					<h3 style="margin: 0; color: {border_color};">Analysis Result: {risk_text}</h3>
+					<h3 style="margin: 0; color: {border_color};">Risk Level: {risk_text}</h3>
 				</div>
 				""",
 				unsafe_allow_html=True,
 			)
 
-			st.write("")
-			st.subheader("Why Explanation")
+			st.subheader("Activated Rules")
 			if active_rules:
-				st.write("This risk is determined based on the following clinical rules that are satisfied:")
 				for rule in active_rules:
 					st.markdown(f"- **{rule['rule_id']}**: {rule['if']} → {rule['then']}")
 			else:
-				st.info("No rules are satisfied. Low risk is assigned by default.")
-
-			st.subheader("Traceability (Active Rules)")
-			if active_rules:
-				st.table(active_rules)
-				active_rule_ids = ", ".join([rule["rule_id"] for rule in active_rules])
-				st.caption(f"Active rules: {active_rule_ids}")
-			else:
 				st.info("No rules are active. The system assigns low risk by default.")
 
-			st.subheader("Decision Flow (Inference Process)")
+			st.subheader("Decision Process")
 			high_count = sum(1 for r in active_rules if r["level"] == "High")
 			medium_count = sum(1 for r in active_rules if r["level"] == "Medium")
 			low_count = sum(1 for r in active_rules if r["level"] == "Low")
-
-			st.markdown(
-				"""
-				**Rule-Based Inference Process:**  
-				User input → Rule evaluation → Inference engine → Result → Explanation
-				"""
-			)
 			st.markdown(
 				"\n".join(
 					[
-						f"1. **User Input**: Patient data entered (age={age}, BMI={bmi}, glucose={glucose}, HbA1c={hba1c}, hypertension={hypertension}, heart disease={heart_disease}, smoking={smoking}).",
-						f"2. **Rule Evaluation**: System evaluates {len(RULES)} IF-THEN rules (R1-R30) against patient data using forward chaining.",
-						f"3. **Inference Engine**: Active rules found: {len(active_rules)} (High={high_count}, Medium={medium_count}, Low={low_count}).",
-						"4. **Conflict Handling**: High > Medium > Low priority applied if conflicts exist.",
-						f"5. **Result**: Final decision: {final_risk}.",
-						"6. **Explanation**: WHY explanation displayed based on satisfied rules.",
+						"1. **Input data** collected from the sidebar.",
+						f"2. **Rule evaluation** checks {len(RULES)} IF-THEN rules against the case.",
+						f"3. **Multiple rules triggered**: {len(active_rules)} active rule(s) (High={high_count}, Medium={medium_count}, Low={low_count}).",
+						"4. **Conflict handling** applied: High > Medium > Low.",
+						f"5. **Final decision**: {final_risk}.",
 					]
 				)
 			)
+
+			st.subheader("Explanation")
+			if active_rules:
+				important_reasons = []
+				for rule in active_rules:
+					if rule["level"] == "High":
+						important_reasons.append(rule["if"])
+				if important_reasons:
+					st.write(
+						"Based on active clinical rules, the combination of high-risk factors drives the final decision."
+					)
+				for rule in active_rules:
+					st.write(f"- {rule['rule_id']}: {rule['if']}")
+			else:
+				st.write("The system defaults to low risk when no clinical rules are satisfied.")
+
+			st.caption("Rule-based system; no machine learning involved.")
 		else:
 			st.info("Fill in the parameters in the sidebar and click Analyze to start evaluation.")
 
