@@ -158,54 +158,61 @@ def main():
 			final_risk = resolve_conflict(active_rules)
 			border_color, bg_color, risk_text = risk_style(final_risk)
 
-			st.markdown(
-				f"""
-				<div style="padding: 16px; border-radius: 10px; border: 2px solid {border_color}; background-color: {bg_color};">
-					<h3 style="margin: 0; color: {border_color};">Risk Level: {risk_text}</h3>
-				</div>
-				""",
-				unsafe_allow_html=True,
-			)
+			st.subheader("Analysis Results")
+			
+			# Risk Level Table
+			risk_data = {
+				"Parameter": ["Risk Level", "Status"],
+				"Value": [risk_text, "Active" if active_rules else "Default (Low Risk)"]
+			}
+			st.table(risk_data)
 
-			st.subheader("Activated Rules")
+			# Activated Rules Table
 			if active_rules:
+				rules_data = []
 				for rule in active_rules:
-					st.markdown(f"- **{rule['rule_id']}**: {rule['if']} → {rule['then']}")
+					rules_data.append({
+						"Rule ID": rule['rule_id'],
+						"Condition": rule['if'],
+						"Conclusion": rule['then']
+					})
+				st.subheader("Activated Clinical Rules")
+				st.dataframe(rules_data, use_container_width=True)
 			else:
-				st.info("No rules are active. The system assigns low risk by default.")
+				st.subheader("Activated Clinical Rules")
+				st.info("No clinical rules were activated. System defaults to Low Risk.")
 
-			st.subheader("Decision Process")
+			# Decision Process Table
 			high_count = sum(1 for r in active_rules if r["level"] == "High")
 			medium_count = sum(1 for r in active_rules if r["level"] == "Medium")
 			low_count = sum(1 for r in active_rules if r["level"] == "Low")
-			st.markdown(
-				"\n".join(
-					[
-						"1. **Input data** collected from the sidebar.",
-						f"2. **Rule evaluation** checks {len(RULES)} IF-THEN rules against the case.",
-						f"3. **Multiple rules triggered**: {len(active_rules)} active rule(s) (High={high_count}, Medium={medium_count}, Low={low_count}).",
-						"4. **Conflict handling** applied: High > Medium > Low.",
-						f"5. **Final decision**: {final_risk}.",
-					]
-				)
-			)
+			
+			process_data = [
+				{"Step": "1. Input Collection", "Description": "Clinical parameters collected from sidebar input"},
+				{"Step": "2. Rule Evaluation", "Description": f"System evaluated {len(RULES)} IF-THEN rules against patient data"},
+				{"Step": "3. Rule Activation", "Description": f"{len(active_rules)} rule(s) activated (High: {high_count}, Medium: {medium_count}, Low: {low_count})"},
+				{"Step": "4. Conflict Resolution", "Description": "Priority applied: High > Medium > Low"},
+				{"Step": "5. Final Decision", "Description": f"Risk assessment: {final_risk}"}
+			]
+			st.subheader("Decision Process Flow")
+			st.dataframe(process_data, use_container_width=True)
 
-			st.subheader("Explanation")
+			# Clinical Explanation Table
+			st.subheader("Clinical Rationale")
 			if active_rules:
-				important_reasons = []
+				explanation_data = []
 				for rule in active_rules:
-					if rule["level"] == "High":
-						important_reasons.append(rule["if"])
-				if important_reasons:
-					st.write(
-						"Based on active clinical rules, the combination of high-risk factors drives the final decision."
-					)
-				for rule in active_rules:
-					st.write(f"- {rule['rule_id']}: {rule['if']}")
+					explanation_data.append({
+						"Clinical Factor": rule['if'],
+						"Risk Contribution": rule['level'],
+						"Evidence": f"Rule {rule['rule_id']} activated"
+					})
+				st.dataframe(explanation_data, use_container_width=True)
+				st.caption("**Clinical Interpretation:** The combination of activated rules indicates elevated risk factors requiring clinical attention.")
 			else:
-				st.write("The system defaults to low risk when no clinical rules are satisfied.")
+				st.info("No significant risk factors identified. Patient falls within normal parameters.")
 
-			st.caption("Rule-based system; no machine learning involved.")
+			st.caption("**System Note:** This is a rule-based clinical decision support system with full traceability. No machine learning algorithms used.")
 		else:
 			st.info("Fill in the parameters in the sidebar and click Analyze to start evaluation.")
 
