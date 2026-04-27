@@ -119,16 +119,21 @@ def evaluate_batch(prepared):
 
 
 def main():
-	st.set_page_config(page_title="CDSS Diabetes Type 2", layout="wide")
+	st.set_page_config(
+		page_title="CDSS - Diabetes Risk Assessment", 
+		page_icon="🏥",
+		layout="wide"
+	)
 
-	st.title("Clinical Decision Support System (CDSS)")
-	st.subheader("Early Detection of Type 2 Diabetes")
-	st.caption("Rule-based inference with traceable decision logic.")
+	st.title("🏥 Clinical Decision Support System")
+	st.subheader("Type 2 Diabetes Risk Assessment & Management")
+	st.caption("Evidence-based rule engine for clinical decision making | Full traceability | No machine learning")
 
 	tab_single, tab_batch = st.tabs(["Individual Analysis", "Batch CSV Analysis"])
 
 	with tab_single:
-		st.sidebar.header("Clinical Input Parameters")
+		st.sidebar.header("🏥 Patient Assessment")
+		st.sidebar.caption("Enter clinical parameters for risk evaluation")
 		age = st.sidebar.number_input("Age (years)", min_value=1, max_value=120, value=40)
 		bmi = st.sidebar.number_input("BMI", min_value=10.0, max_value=60.0, value=24.0, step=0.1)
 		glucose = st.sidebar.number_input(
@@ -141,7 +146,7 @@ def main():
 		heart_disease = st.sidebar.selectbox("Heart Disease", options=[0, 1], index=0)
 		smoking = st.sidebar.selectbox("Smoking Status", options=["Never", "Former", "Current"])
 
-		analyze = st.sidebar.button("Analyze", type="primary")
+		analyze = st.sidebar.button("🔍 Assess Risk", type="primary")
 
 		if analyze:
 			patient_data = {
@@ -212,9 +217,39 @@ def main():
 			else:
 				st.info("No significant risk factors identified. Patient falls within normal parameters.")
 
+			# Clinical Recommendations Table
+			st.subheader("Clinical Recommendations")
+			if final_risk == "High":
+				recommendations = [
+					{"Priority": "Immediate", "Action": "Schedule comprehensive diabetes evaluation within 1 week", "Rationale": "Multiple high-risk factors detected requiring urgent assessment"},
+					{"Priority": "Diagnostic", "Action": "Order HbA1c, fasting glucose, and oral glucose tolerance test", "Rationale": "Confirm diabetes diagnosis with gold-standard tests"},
+					{"Priority": "Lifestyle", "Action": "Initiate intensive lifestyle intervention program", "Rationale": "Address modifiable risk factors through diet and exercise"},
+					{"Priority": "Monitoring", "Action": "Quarterly follow-up for 6 months, then every 6 months", "Rationale": "Close monitoring required for high-risk patients"},
+					{"Priority": "Referral", "Action": "Consider endocrinology consultation if diagnosis confirmed", "Rationale": "Specialist management may be needed for complex cases"}
+				]
+			elif final_risk == "Medium":
+				recommendations = [
+					{"Priority": "Assessment", "Action": "Schedule diabetes screening within 3 months", "Rationale": "Moderate risk factors warrant timely evaluation"},
+					{"Priority": "Diagnostic", "Action": "Order HbA1c and fasting glucose tests", "Rationale": "Screen for prediabetes or diabetes"},
+					{"Priority": "Lifestyle", "Action": "Provide lifestyle counseling and education", "Rationale": "Prevent progression through behavior modification"},
+					{"Priority": "Monitoring", "Action": "Annual follow-up with risk factor reassessment", "Rationale": "Regular monitoring for risk factor changes"},
+					{"Priority": "Prevention", "Action": "Consider metformin if prediabetes confirmed", "Rationale": "Pharmacologic intervention may prevent diabetes onset"}
+				]
+			else:  # Low
+				recommendations = [
+					{"Priority": "Screening", "Action": "Continue routine diabetes screening per guidelines", "Rationale": "Low risk allows standard screening intervals"},
+					{"Priority": "Education", "Action": "Provide general diabetes prevention education", "Rationale": "Maintain awareness of risk factors"},
+					{"Priority": "Lifestyle", "Action": "Encourage healthy lifestyle maintenance", "Rationale": "Prevent risk factor development"},
+					{"Priority": "Monitoring", "Action": "Reassess risk factors every 3 years", "Rationale": "Long-term monitoring for risk factor changes"},
+					{"Priority": "Wellness", "Action": "Focus on overall cardiovascular health", "Rationale": "Comprehensive preventive care approach"}
+				]
+			
+			st.dataframe(recommendations, use_container_width=True)
+			st.caption(f"**Risk Category: {final_risk}** | **System Type:** Rule-based Clinical Decision Support | **Evidence Level:** Based on activated clinical rules")
+
 			st.caption("**System Note:** This is a rule-based clinical decision support system with full traceability. No machine learning algorithms used.")
 		else:
-			st.info("Fill in the parameters in the sidebar and click Analyze to start evaluation.")
+			st.info("👤 Enter patient information in the sidebar and click 'Assess Risk' to generate clinical recommendations.")
 
 	with tab_batch:
 		st.subheader("Batch Dataset Simulation Evaluation")
