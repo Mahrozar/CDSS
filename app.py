@@ -53,14 +53,14 @@ def main():
 		final_risk = resolve_conflict(active_rules)
 		border_color, bg_color, risk_text = risk_style(final_risk)
 
-		st.subheader("Analysis Results")
-		
-		# Risk Level Table
-		risk_data = {
-			"Parameter": ["Risk Level", "Status"],
-			"Value": [risk_text, "Active" if active_rules else "Default (Low Risk)"]
-		}
-		st.table(risk_data)
+		# Risk Level Result
+		st.markdown("---")
+		st.subheader("📊 RESULT")
+		st.markdown(f"### Risk Level: **{risk_text}**")
+		st.markdown("---")
+
+		# Explanation Section
+		st.subheader("🔍 EXPLANATION")
 
 		# Activated Rules Table
 		if active_rules:
@@ -71,29 +71,30 @@ def main():
 					"Condition": rule['if'],
 					"Conclusion": rule['then']
 				})
-			st.subheader("Activated Clinical Rules")
+			st.markdown("**Activated Rules:**")
 			st.dataframe(rules_data, use_container_width=True)
 		else:
-			st.subheader("Activated Clinical Rules")
 			st.info("No clinical rules were activated. System defaults to Low Risk.")
 
-		# Decision Process Table
+		# Decision Process Summary
 		high_count = sum(1 for r in active_rules if r["level"] == "High")
 		medium_count = sum(1 for r in active_rules if r["level"] == "Medium")
 		low_count = sum(1 for r in active_rules if r["level"] == "Low")
-		
-		process_data = [
-			{"Step": "1. Input Collection", "Description": "Clinical parameters collected from sidebar input"},
-			{"Step": "2. Rule Evaluation", "Description": f"System evaluated {len(RULES)} IF-THEN rules against patient data"},
-			{"Step": "3. Rule Activation", "Description": f"{len(active_rules)} rule(s) activated (High: {high_count}, Medium: {medium_count}, Low: {low_count})"},
-			{"Step": "4. Conflict Resolution", "Description": "Priority applied: High > Medium > Low"},
-			{"Step": "5. Final Decision", "Description": f"Risk assessment: {final_risk}"}
-		]
-		st.subheader("Decision Process Flow")
-		st.dataframe(process_data, use_container_width=True)
 
-		# Clinical Recommendations Table
-		st.subheader("Clinical Recommendations")
+		st.markdown("**Decision Process:**")
+		process_summary = f"""
+		- **Input Collection**: Clinical parameters collected from sidebar input
+		- **Rule Evaluation**: System evaluated {len(RULES)} IF-THEN rules against patient data
+		- **Rule Activation**: {len(active_rules)} rule(s) activated (High: {high_count}, Medium: {medium_count}, Low: {low_count})
+		- **Conflict Resolution**: Priority applied: High > Medium > Low
+		- **Final Decision**: Risk assessment: {final_risk}
+		"""
+		st.markdown(process_summary)
+
+		st.markdown("---")
+
+		# Clinical Recommendations Section
+		st.subheader("🏥 CLINICAL RECOMMENDATION")
 		if final_risk == "High":
 			recommendations = [
 				{"Priority": "Immediate", "Action": "Schedule comprehensive diabetes evaluation within 1 week", "Rationale": "Multiple high-risk factors detected requiring urgent assessment"},
@@ -118,7 +119,7 @@ def main():
 				{"Priority": "Monitoring", "Action": "Reassess risk factors every 3 years", "Rationale": "Long-term monitoring for risk factor changes"},
 				{"Priority": "Wellness", "Action": "Focus on overall cardiovascular health", "Rationale": "Comprehensive preventive care approach"}
 			]
-		
+
 		st.dataframe(recommendations, use_container_width=True)
 		st.caption(f"**Risk Category: {final_risk}** | **System Type:** Rule-based Clinical Decision Support | **Evidence Level:** Based on {len(active_rules)} activated clinical rules")
 
