@@ -202,21 +202,6 @@ def main():
 			st.subheader("Decision Process Flow")
 			st.dataframe(process_data, use_container_width=True)
 
-			# Clinical Explanation Table
-			st.subheader("Clinical Rationale")
-			if active_rules:
-				explanation_data = []
-				for rule in active_rules:
-					explanation_data.append({
-						"Clinical Factor": rule['if'],
-						"Risk Contribution": rule['level'],
-						"Evidence": f"Rule {rule['rule_id']} activated"
-					})
-				st.dataframe(explanation_data, use_container_width=True)
-				st.caption("**Clinical Interpretation:** The combination of activated rules indicates elevated risk factors requiring clinical attention.")
-			else:
-				st.info("No significant risk factors identified. Patient falls within normal parameters.")
-
 			# Clinical Recommendations Table
 			st.subheader("Clinical Recommendations")
 			if final_risk == "High":
@@ -245,7 +230,7 @@ def main():
 				]
 			
 			st.dataframe(recommendations, use_container_width=True)
-			st.caption(f"**Risk Category: {final_risk}** | **System Type:** Rule-based Clinical Decision Support | **Evidence Level:** Based on activated clinical rules")
+			st.caption(f"**Risk Category: {final_risk}** | **System Type:** Rule-based Clinical Decision Support | **Evidence Level:** Based on {len(active_rules)} activated clinical rules")
 
 			st.caption("**System Note:** This is a rule-based clinical decision support system with full traceability. No machine learning algorithms used.")
 		else:
