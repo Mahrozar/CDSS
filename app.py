@@ -172,4 +172,4 @@ def main():
 		st.info("⚕️ **Clinical Note:** For healthcare professional use. Final decisions by qualified clinicians only.")
 
 	else:
-		st.info("👤 Enter patient data in the sidebar and click 'Assess Risk' to get clinical recommendations.")
+		st.info("👤 Enter patient data in the sidebar and click 'Analyze' to get clinical recommendations.")
