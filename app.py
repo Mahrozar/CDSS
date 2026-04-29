@@ -19,15 +19,14 @@ def main():
 		layout="wide"
 	)
 
-	# Simple Professional Header
-	st.markdown("# 🏥 Diabetes Risk Assessment")
-	st.markdown("**Clinical Decision Support System** - Rule-based evaluation")
+	# Simple Header
+	st.title("🏥 Diabetes Risk Assessment")
+	st.markdown("**Rule-based Clinical Decision Support System**")
 
-	# Simple Disclaimer
-	st.info("⚕️ **Clinical Tool**: Uses evidence-based rules, not AI/ML. For healthcare professional use only.")
+	st.info("Uses 30 clinical rules for diabetes risk evaluation")
 
-	st.sidebar.header("Patient Data")
-	st.sidebar.caption("Enter clinical parameters")
+	st.sidebar.header("🏥 Patient Assessment")
+	st.sidebar.caption("Enter clinical parameters for evaluation")
 	age = st.sidebar.number_input("Patient Age (years)", min_value=1, max_value=120, value=40)
 	bmi = st.sidebar.number_input("Body Mass Index (BMI)", min_value=10.0, max_value=60.0, value=24.0, step=0.1)
 	glucose = st.sidebar.number_input(
@@ -40,7 +39,7 @@ def main():
 	heart_disease = st.sidebar.selectbox("Heart Disease History", options=[0, 1], index=0, format_func=lambda x: "Yes" if x else "No")
 	smoking = st.sidebar.selectbox("Smoking Status", options=["Never", "Former", "Current"])
 
-	analyze = st.sidebar.button("Analyze", type="primary", use_container_width=True)
+	analyze = st.sidebar.button("🔬 Evaluate Patient Risk", type="primary", use_container_width=True)
 
 	if analyze:
 		patient_data = {
@@ -56,6 +55,11 @@ def main():
 		active_rules = evaluate_rules(patient_data)
 		final_risk = resolve_conflict(active_rules)
 		border_color, bg_color, risk_text = risk_style(final_risk)
+
+		# Decision Process
+		st.markdown("---")
+		st.markdown("## 🔄 Decision Process")
+		st.markdown("Patient Data → Rule Evaluation → Conflict Resolution → Clinical Decision")
 
 		# Clinical Report Header
 		st.markdown("---")
@@ -108,7 +112,7 @@ def main():
 			st.info("ℹ️ No clinical rules were activated. Risk assessment defaults to Low Risk based on current parameters.")
 
 		# Decision Process
-		st.markdown("### Decision Process Summary")
+		st.markdown("### Decision Trace Summary")
 		high_count = sum(1 for r in active_rules if r["level"] == "High")
 		medium_count = sum(1 for r in active_rules if r["level"] == "Medium")
 		low_count = sum(1 for r in active_rules if r["level"] == "Low")
@@ -129,7 +133,7 @@ def main():
 
 		# Clinical Recommendations
 		st.markdown("---")
-		st.markdown("## 🏥 Clinical Recommendations")
+		st.markdown("## 💊 RECOMMENDED ACTIONS")
 
 		if final_risk == "High":
 			recommendations = [
@@ -158,21 +162,11 @@ def main():
 
 		st.dataframe(recommendations, use_container_width=True)
 
-		# System Information
+		# System Info
 		st.markdown("---")
-		st.markdown("## 📋 SYSTEM INFORMATION")
-		st.markdown(f"""
-		**Assessment Method:** Rule-Based Clinical Decision Support System  
-		**Knowledge Base:** {len(RULES)} evidence-based clinical rules  
-		**Evidence Level:** Based on {len(active_rules)} activated clinical rules  
-		**System Type:** Deterministic rule engine (No probabilistic modeling)  
-		**Traceability:** Full clinical decision logic documented above
-		""")
+		st.markdown(f"**System:** Rule-based CDSS | **Rules:** {len(RULES)} | **Activated:** {len(active_rules)}")
 
-		st.info("⚕️ **Clinical Note:** For healthcare professional use. Final decisions by qualified clinicians only.")
-
-	else:
-		st.info("👤 Enter patient data in the sidebar and click 'Analyze' to get clinical recommendations.")
+		st.info("For healthcare professional use only")
 
 
 if __name__ == "__main__":
