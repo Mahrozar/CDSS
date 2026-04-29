@@ -173,3 +173,7 @@ def main():
 
 	else:
 		st.info("👤 Enter patient data in the sidebar and click 'Analyze' to get clinical recommendations.")
+
+
+if __name__ == "__main__":
+	main()
